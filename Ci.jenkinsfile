@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    stages {
+        stage('SCM Clone') {
+            steps {
+                git branch: 'main', url: "https://github.com/bayuagungn/workshopCiJenkins.git"
+            }
+        }
+
+        stage('Run Automation') {
+            steps {
+                script {
+                    echo "Executing Robot Tests..."
+                    
+                    // Run the Robot Framework test
+                    bat  'robot -d result .\\testcase\\01.LoginPage.robot'
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            robot outputPath:'\\result', passThreshold: 80.0, unstableThreshold: 70.0, onlyCritical: false
+        }
+    }
+}
